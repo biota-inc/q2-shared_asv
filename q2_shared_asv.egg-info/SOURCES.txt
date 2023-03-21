@@ -1,0 +1,11 @@
+setup.py
+q2_shared_asv/__init__.py
+q2_shared_asv/compute.py
+q2_shared_asv/plugin_setup.py
+q2_shared_asv.egg-info/PKG-INFO
+q2_shared_asv.egg-info/SOURCES.txt
+q2_shared_asv.egg-info/dependency_links.txt
+q2_shared_asv.egg-info/entry_points.txt
+q2_shared_asv.egg-info/not-zip-safe
+q2_shared_asv.egg-info/requires.txt
+q2_shared_asv.egg-info/top_level.txt

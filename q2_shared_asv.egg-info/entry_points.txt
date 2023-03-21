@@ -1,0 +1,2 @@
+[qiime2.plugins]
+q2-shared-asv = q2_shared_asv.plugin_setup:plugin
