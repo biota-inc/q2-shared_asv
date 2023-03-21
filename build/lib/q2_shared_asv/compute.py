@@ -1,7 +1,9 @@
-from qiime2.plugin import Plugin
+import qiime2
 import pandas as pd
-
-from q2_types.feature_table import Frequency
+from qiime2.plugin import Plugin
+from q2_feature_table import filter_features
+from q2_types.feature_table import (
+    FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
 
 # Define the plugin
 plugin = Plugin(
@@ -13,18 +15,26 @@ plugin = Plugin(
     short_description='Plugin for computing shared ASV.',
 )
 
-def compute(a: pd.DataFrame, b: pd.DataFrame) -> pd.DataFrame:
-    """
-    Compute the Shared ASVs between two FeatureTable.
-    """
-        
+def compute(table: FeatureTable[RelativeFrequency], sample_a: str, sample_b: str, metadata: qiime2.Metadata, percentage: float) -> (FeatureTable[RelativeFrequency]):
+    # Filter the feature table to only include sample A and sample B
+    filtered_table = qiime2.plugins.feature_table.actions.filter_samples(
+        table=table,
+        metadata=metadata,
+        where=f"sample-id IN ('{sample_a}', '{sample_b}')",
+    ).filtered_table
+
+    # Get the ASV frequencies for sample A and sample B
+    table_a = filtered_table[[sample_a]]
+    table_b = filtered_table[[sample_b]]
+
     # Merge the tables
-    merged_table = a.merge(b)
+    merged_table = table_a.merge(table_b, how='inner', left_index=True, right_index=True)
 
-    # Get the feature table summary
-    table_summary = merged_table.sum(axis=0)
+    # Get the total relative frequency for each ASV across the two samples
+    table_summary = merged_table.sum(axis=1)
 
-    # Filter for ASVs that are present in both tables
-    shared_asvs = table_summary[table_summary > 1]
+    # Filter for ASVs that exceed the specified threshold of relative frequency
+    shared_asvs_table = table_summary[table_summary > percentage]
 
-    return shared_asvs
+    shared_asvs_artifact.save(shared_asvs_table)
+    return shared_asvs_artifact

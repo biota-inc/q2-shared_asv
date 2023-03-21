@@ -1,10 +1,11 @@
-from qiime2.plugin import Plugin
 from qiime2.plugin import (Str, Plugin, Choices, List, Citations, Range, Int,
                            Float, Visualization, Bool, TypeMap, Metadata,
                            MetadataColumn, Categorical)
-from q2_types.feature_table import FeatureTable, Frequency
+from q2_types.feature_table import (
+    FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
+from q2_types.feature_data import FeatureData
+from q2_feature_table import filter_features
 from q2_shared_asv.compute import compute
-
 
 plugin = Plugin(
     name='shared-asv',
@@ -18,17 +19,30 @@ plugin = Plugin(
 # Register the function as an artifact method
 plugin.methods.register_function(
     function=compute,
-    inputs={'a': FeatureTable[Frequency], 'b': FeatureTable[Frequency]},
-    parameters={},
-    outputs=[('shared_asvs', FeatureTable[Frequency])],
-    input_descriptions={
-        'a': 'Feature table artifact for the first sample',
-        'b': 'Feature table artifact for the second sample'
+    inputs={
+        'table': FeatureTable[RelativeFrequency],
     },
-    parameter_descriptions={},
+    parameters={
+        'sample_a': Str,
+        'sample_b': Str,
+        'metadata': Metadata,
+        'percentage': Float % Range(0, 1, inclusive_start=True, inclusive_end=True),
+    },
+    outputs=[
+        ('shared_asvs', FeatureTable[RelativeFrequency]),
+    ],
+     input_descriptions={
+        'table': 'The feature table containing the samples for which shared ASVs should be computed.',
+    },
+    parameter_descriptions={
+        'sample_a': 'The first sample for which shared ASVs should be computed.',
+        'sample_b': 'The second sample for which shared ASVs should be computed.',
+        'metadata': 'The sample metadata for sample-id',
+        'percentage': 'The threshold for filtering shared ASVs based on relative frequency.',
+    },
     output_descriptions={
-        'shared_asvs': 'Feature table artifact with shared ASVs between the two samples'
+        'shared_asvs': 'The resulting feature table containing the shared ASVs between the two samples.',
     },
-    name='Compute generates FeatureTable data',
-    description='Computes the shared ASVs between two feature tables using Qiime2.'
+    name='Compute Shared ASVs',
+    description='Compute the Shared ASVs between two samples within a FeatureTable',
 )
