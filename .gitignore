@@ -1,1 +1,4 @@
 .gitattributes
+buiid/*
+build/lib/
+q2_shared_asv.egg-info/

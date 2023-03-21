@@ -36,5 +36,7 @@ def compute(table: FeatureTable[RelativeFrequency], sample_a: str, sample_b: str
     # Filter for ASVs that exceed the specified threshold of relative frequency
     shared_asvs_table = table_summary[table_summary > percentage]
 
-    shared_asvs_artifact.save(shared_asvs_table)
+    # Create an artifact from the shared_asvs_table
+    shared_asvs_artifact = qiime2.Artifact.import_data('FeatureTable[RelativeFrequency]', shared_asvs_table)
+
     return shared_asvs_artifact
