@@ -2,3 +2,5 @@
 buiid/*
 build/lib/
 q2_shared_asv.egg-info/
+.DS_Store
+q2_shared_asv/.*
