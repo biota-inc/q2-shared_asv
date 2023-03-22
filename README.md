@@ -66,18 +66,18 @@ done
 for i in {1..39}; do
 qiime feature-table filter-samples \
   --i-table shared-asvs_${i}.qza \
-  --m-metadata-file metadata/details/sample-data.txt \
+  --m-metadata-file metadata/details/sample-data_skin.txt \
   --o-filtered-table shared-asvs_${i}_skin.qza
 done
 ```
 4. Merge the table files into one!
 ```bash
-cp shared-asvs_1.qza merged-table.qza
+cp shared-asvs_1_skin.qza merged-table.qza
 
 for i in {2..39}; do
     qiime feature-table merge \
         --i-tables merged-table.qza \
-        --i-tables shared-asvs_$i.qza \
+        --i-tables shared-asvs_${i}_skin.qza \
         --o-merged-table temp_merged-table.qza
 
      mv temp_merged-table.qza merged-table.qza
