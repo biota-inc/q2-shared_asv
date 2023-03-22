@@ -1,10 +1,10 @@
 import qiime2
-import pandas as pd
 from qiime2.plugin import Plugin
-from q2_feature_table import filter_features, filter_samples
+from q2_feature_table import filter_features, filter_samples, merge
 from q2_types.feature_table import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
 import biom
+import numpy as np
 
 # Define the plugin
 plugin = Plugin(
@@ -23,12 +23,30 @@ def compute(table: biom.Table, sample_a: str, sample_b: str, metadata: qiime2.Me
         metadata=metadata,
         where=f'"sample-id" IN (\'{sample_a}\', \'{sample_b}\')',
     )
-
-    # Compute the shared ASVs
-    shared_asvs = filter_features(
+    
+    # Filter features based on the percentage
+    filtered_features_sample_a = filter_features(
         table=filtered_table,
-        min_frequency=percentage,
-        min_samples=2,
+        metadata=metadata,
+        where=f'"sample-id"=\'{sample_a}\' AND CAST("frequency" AS FLOAT)>={percentage}',
+    )
+    
+    filtered_features_sample_b = filter_features(
+        table=filtered_table,
+        metadata=metadata,
+        where=f'"sample-id"=\'{sample_b}\' AND CAST("frequency" AS FLOAT)>={percentage}',
     )
 
+    # Check if either table is empty
+    if filtered_features_sample_a.shape[0] == 0 or filtered_features_sample_b.shape[0] == 0:
+        # Either table is empty, print the message in yellow
+        print(f'\033[33mThere is no shared ASVs between {sample_a} and {sample_b}\033[0m')
+        return biom.Table(np.zeros((0, 2)), [], [sample_a, sample_b])
+
+    # Merge the filtered feature tables of sample A and sample B
+    shared_asvs, _ = merge(
+        tables=[filtered_features_sample_a, filtered_features_sample_b],
+        overlap_method='sum'
+    )
+    
     return shared_asvs
