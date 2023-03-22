@@ -9,7 +9,7 @@ import biom
 # Define the plugin
 plugin = Plugin(
     name='shared-asv',
-    version='0.1.0',
+    version='0.2.0',
     website='https://github.com/biota-inc/q2-shared_asv',
     package='q2_shared_asv',
     description='A QIIME 2 plugin for shared ASV analysis',
