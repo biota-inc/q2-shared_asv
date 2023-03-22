@@ -34,7 +34,7 @@ Outputs:
 
 ## Example to run shared-asv plugin
 1. Make a table like below and name it as shared_asv.txt (tab-demilited format txt file).
-```md
+
 | Pair A | Pair B | Pair ID |
 |--------|--------|---------|
 | S1     | N1     | 1       |
@@ -42,7 +42,7 @@ Outputs:
 | S3     | N3     | 3       |
 | S4     | N4     | 4       |
 | S5     | N5     | 5       |
-```
+
 2. Run the command below. This step generates the shared ASV table of each pair.
 ```bash
 tail -n +2 shared_asv.txt | while read line; do
