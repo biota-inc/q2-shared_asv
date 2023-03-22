@@ -1,9 +1,10 @@
 import qiime2
 import pandas as pd
 from qiime2.plugin import Plugin
-from q2_feature_table import filter_features
+from q2_feature_table import filter_features, filter_samples
 from q2_types.feature_table import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
+import biom
 
 # Define the plugin
 plugin = Plugin(
@@ -15,28 +16,19 @@ plugin = Plugin(
     short_description='Plugin for computing shared ASV.',
 )
 
-def compute(table: FeatureTable[RelativeFrequency], sample_a: str, sample_b: str, metadata: qiime2.Metadata, percentage: float) -> (FeatureTable[RelativeFrequency]):
+def compute(table: biom.Table, sample_a: str, sample_b: str, metadata: qiime2.Metadata, percentage: float) -> biom.Table:
     # Filter the feature table to only include sample A and sample B
-    filtered_table = qiime2.plugins.feature_table.actions.filter_samples(
+    filtered_table = filter_samples(
         table=table,
         metadata=metadata,
-        where=f"sample-id IN ('{sample_a}', '{sample_b}')",
-    ).filtered_table
+        where=f'"sample-id" IN (\'{sample_a}\', \'{sample_b}\')',
+    )
 
-    # Get the ASV frequencies for sample A and sample B
-    table_a = filtered_table[[sample_a]]
-    table_b = filtered_table[[sample_b]]
+    # Compute the shared ASVs
+    shared_asvs = filter_features(
+        table=filtered_table,
+        min_frequency=percentage,
+        min_samples=2,
+    )
 
-    # Merge the tables
-    merged_table = table_a.merge(table_b, how='inner', left_index=True, right_index=True)
-
-    # Get the total relative frequency for each ASV across the two samples
-    table_summary = merged_table.sum(axis=1)
-
-    # Filter for ASVs that exceed the specified threshold of relative frequency
-    shared_asvs_table = table_summary[table_summary > percentage]
-
-    # Create an artifact from the shared_asvs_table
-    shared_asvs_artifact = qiime2.Artifact.import_data('FeatureTable[RelativeFrequency]', shared_asvs_table)
-
-    return shared_asvs_artifact
+    return shared_asvs

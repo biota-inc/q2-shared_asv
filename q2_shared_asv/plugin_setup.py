@@ -6,6 +6,7 @@ from q2_types.feature_table import (
 from q2_types.feature_data import FeatureData
 from q2_feature_table import filter_features
 from q2_shared_asv.compute import compute
+import biom
 
 plugin = Plugin(
     name='shared-asv',
