@@ -57,7 +57,7 @@ tail -n +2 shared_asv.txt | while read line; do
         --m-metadata-file metadata/sample-data.txt \
         --p-sample-a $PairA \
         --p-sample-b $PairB \
-        --p-percentage 0 \
+        --p-percentage 0.0001 \
         --o-shared-asvs shared-asvs_$ID.qza
 done
 ```

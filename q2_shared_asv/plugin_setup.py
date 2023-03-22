@@ -39,7 +39,7 @@ plugin.methods.register_function(
         'sample_a': 'The first sample for which shared ASVs should be computed.',
         'sample_b': 'The second sample for which shared ASVs should be computed.',
         'metadata': 'The sample metadata for sample-id',
-        'percentage': 'The threshold for filtering shared ASVs based on relative frequency.',
+        'percentage': 'The threshold for filtering shared ASVs. Recommendation: 0.0001',
     },
     output_descriptions={
         'shared_asvs': 'The resulting feature table containing the shared ASVs between the two samples.',
