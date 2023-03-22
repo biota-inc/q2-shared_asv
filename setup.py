@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='q2-shared-asv',
-    version='0.1.0',
+    version='0.2.0',
     packages=find_packages(),
     entry_points={
         'qiime2.plugins': ['q2-shared-asv=q2_shared_asv.plugin_setup:plugin']
